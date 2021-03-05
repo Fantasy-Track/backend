@@ -5,6 +5,7 @@ import fantasyapp.draftInstance.SingleInstanceDraftServer;
 import fantasyapp.grpc.Authenticator;
 import com.google.inject.Inject;
 import io.grpc.Server;
+import io.grpc.ServerBuilder;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -33,11 +34,10 @@ public class DraftMasterServer extends Thread {
     public void run() {
         router = new GrpcDraftServiceRouter();
 
-        InetSocketAddress address = new InetSocketAddress("0.0.0.0", Integer.parseInt(System.getenv("PORT")));
-        Server server = NettyServerBuilder.forAddress(address)
-                .useTransportSecurity(
-                        getClass().getClassLoader().getResourceAsStream("fantasytrack.cer"),
-                        getClass().getClassLoader().getResourceAsStream("fantasytrack.key"))
+        Server server = ServerBuilder.forPort(Integer.parseInt(System.getenv("PORT")))
+//                .useTransportSecurity(
+//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.cer"),
+//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.key"))
                 .addService(router)
                 .intercept(authenticator)
                 .build();
