@@ -6,7 +6,6 @@ COPY mobile mobile
 COPY jobs jobs
 COPY draft draft
 COPY shared shared
-COPY secret secret
 COPY pom.xml .
 COPY --from=proto /fantasytrack/proto proto/
 
