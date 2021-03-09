@@ -94,7 +94,7 @@ public class ResultsPageExtractor {
         Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
         final HashMap<String, String> seasons = new Gson().fromJson(matcher.group(1), mapType);
         logger.info("List of division seasons: " + seasons.toString());
-        return Optional.ofNullable(year).orElse(divisionId);
+        return Optional.ofNullable(seasons.get(year)).orElse(divisionId);
     }
 
     private Elements extractResultsFromEventPage(Document document) {
