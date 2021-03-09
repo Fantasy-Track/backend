@@ -34,7 +34,7 @@ public class IndexMeetsTest {
            return List.of(
                    MeetData.builder().name("New Meet 1").athleticId("AID1").date("2020-03-07T00:00:00").type("1").build(),
                    MeetData.builder().name("New Meet 2").athleticId("AID2").date("2020-03-07T00:00:00").type("1").build(),
-                   MeetData.builder().name("New Meet 5").athleticId("AID5").date("2020-03-07T00:00:00").type("1").build(),
+                   MeetData.builder().name("New Meet 5").athleticId("AID5").date("2020-03-05T00:00:00").type("1").build(),
                    MeetData.builder().name("New Meet 6").athleticId("AID6").date("2020-03-07T00:00:00").type("1").build()
            );
         });
@@ -51,11 +51,11 @@ public class IndexMeetsTest {
 
     @Test
     public void testIndexAndUploadMeets() throws Exception {
-        indexMeets.indexAndUploadMeets("904", "test", Instant.now().minus(10, ChronoUnit.DAYS));
+        indexMeets.indexAndUploadMeets("904", "test", Instant.parse("2020-03-06T00:00:00Z"));
 
-        verify(meetRepository).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID5") && argument.enabled)); // test add new
-        verify(meetRepository).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID6") && !argument.enabled)); // test update and keep disabled
         verify(meetRepository).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID2") && argument.enabled)); // test update and keep enabled
+        verify(meetRepository).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID5") && !argument.enabled)); // test add new
+        verify(meetRepository).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID6") && !argument.enabled)); // test update and keep disabled
         verify(meetRepository, never()).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID1"))); // test not updated
         verify(meetRepository, never()).addOrReplaceMeet(argThat(argument -> argument.athleticId.equals("AID4"))); // test not touched
     }

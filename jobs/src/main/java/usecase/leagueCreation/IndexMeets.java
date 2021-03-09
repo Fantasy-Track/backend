@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import usecase.pageExtraction.MeetData;
 import usecase.pageExtraction.SchoolInfoExtractor;
+import util.TimeUtil;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -34,7 +35,7 @@ public class IndexMeets {
         for (MeetData meetData : newMeets) {
             logger.info("Indexing meet: " + meetData);
             Instant meetDate = Instant.parse(meetData.date + "Z").truncatedTo(ChronoUnit.DAYS);
-            boolean enabled = meetDate.isAfter(draftTime);
+            boolean enabled = !TimeUtil.isAfterPST(draftTime, meetDate);
 
             Meet prevMeet = prevMeets.get(meetData.athleticId);
             if (prevMeet != null) {
