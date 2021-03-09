@@ -8,6 +8,7 @@ import domain.repository.AthleteUpdateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,6 +19,10 @@ public class ProjectionsUpdater {
 
     private GenerateLeagueRankings leagueRankings;
     private AthleteUpdateRepository athleteUpdateRepository;
+
+    static final String SEASON_YEAR = System.getenv("SEASON_YEAR");
+    static final String PROJECTIONS_YEAR_1 = String.valueOf(Integer.parseInt(SEASON_YEAR) - 1);
+    static final String PROJECTIONS_YEAR_2 = String.valueOf(Integer.parseInt(SEASON_YEAR) - 2);
 
     @Inject
     public ProjectionsUpdater(GenerateLeagueRankings leagueRankings, AthleteUpdateRepository athleteUpdateRepository) {
@@ -36,7 +41,10 @@ public class ProjectionsUpdater {
     }
 
     private void updateProjections(String eventId, String divisionId) throws Exception {
-        List<ProjectionReport> reports = leagueRankings.generateRankingsReport(eventId, divisionId);
+        List<ProjectionReport> reports = new ArrayList<>();
+        reports.addAll(leagueRankings.generateRankingsReport(eventId, divisionId, PROJECTIONS_YEAR_1));
+        reports.addAll(leagueRankings.generateRankingsReport(eventId, divisionId, PROJECTIONS_YEAR_2));
+
         Map<String, Athlete> athletes = getAthleteMap(reports);
         logger.info("Got " + reports.size() + " projections in event: " + eventId);
         for (ProjectionReport report : reports) {

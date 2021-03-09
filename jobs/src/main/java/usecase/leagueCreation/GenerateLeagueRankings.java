@@ -19,8 +19,8 @@ public class GenerateLeagueRankings {
         this.pageExtractor = pageExtractor;
     }
 
-    public List<ProjectionReport> generateRankingsReport(String eventId, String divisionId) throws Exception {
-        Elements rankings = pageExtractor.extractEventRankingsInDivision(eventId, divisionId);
+    public List<ProjectionReport> generateRankingsReport(String eventId, String divisionId, String year) throws Exception {
+        Elements rankings = pageExtractor.extractEventRankingsInDivision(eventId, divisionId, year);
         List<ProjectionReport> reports = new ArrayList<>();
 
         int rank = 1;

@@ -1,6 +1,5 @@
 package usecase.pageExtraction;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import domain.entity.EventResultsTable;
@@ -11,7 +10,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -22,12 +20,9 @@ import usecase.indexing.WebUtil;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -35,7 +30,6 @@ import java.util.stream.Collectors;
 public class ResultsPageExtractor {
 
     private Logger logger = LoggerFactory.getLogger(ResultsPageExtractor.class);
-    static final String PROJECTIONS_YEAR = System.getenv("PROJECTIONS_YEAR");
 
     public List<EventResultsTable> extractEventSections(Meet meet) throws Exception {
         Document resultsPage = WebUtil
@@ -58,12 +52,12 @@ public class ResultsPageExtractor {
         return eventBuckets.values().stream().map(EventResultsTable::new).collect(Collectors.toList());
     }
 
-    public Elements extractEventRankingsInDivision(String eventId, String divisionId) throws Exception {
+    public Elements extractEventRankingsInDivision(String eventId, String divisionId, String year) throws Exception {
         int page = 0;
         Document document;
         Elements rankings = new Elements();
-        String divisionSeasonId = getSeasonDivision(divisionId);
-        logger.info(String.format("Getting division rankings. Original Division ID: %s, Using ID: %s", divisionId, divisionSeasonId));
+        String divisionSeasonId = getSeasonDivision(divisionId, year);
+        logger.info(String.format("Getting division rankings. Original Division ID: %s, Using ID: %s, Year: %s", divisionId, divisionSeasonId, year));
         do {
             URI url = new URIBuilder("https://www.athletic.net/TrackAndField/Division/Event.aspx")
                     .setParameter("DivID", divisionSeasonId)
@@ -85,7 +79,7 @@ public class ResultsPageExtractor {
         return rankings;
     }
 
-    public String getSeasonDivision(String divisionId) throws Exception {
+    public String getSeasonDivision(String divisionId, String year) throws Exception {
         Document document = WebUtil
                 .queueWebPage("https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=" + divisionId)
                 .userAgent("Mozilla/5.0")
@@ -100,7 +94,7 @@ public class ResultsPageExtractor {
         Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
         final HashMap<String, String> seasons = new Gson().fromJson(matcher.group(1), mapType);
         logger.info("List of division seasons: " + seasons.toString());
-        return Optional.ofNullable(seasons.get(PROJECTIONS_YEAR)).orElse(divisionId);
+        return Optional.ofNullable(year).orElse(divisionId);
     }
 
     private Elements extractResultsFromEventPage(Document document) {
