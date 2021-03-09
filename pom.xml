@@ -61,7 +61,7 @@
                     <pluginId>grpc-java</pluginId>
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.22.1:exe:${os.detected.classifier}</pluginArtifact>
                     <protoSourceRoot>
-                        ${basedir}/../proto
+                        ${env.PROTO_DIR}
                     </protoSourceRoot>
                 </configuration>
 

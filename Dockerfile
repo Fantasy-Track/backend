@@ -9,6 +9,7 @@ COPY shared shared
 COPY pom.xml .
 COPY --from=proto /fantasytrack/proto proto/
 
+ENV PROTO_DIR=/fantasytrack/proto
 RUN mvn protobuf:compile protobuf:compile-custom -pl shared
 RUN mvn install -DskipTests=true
 
