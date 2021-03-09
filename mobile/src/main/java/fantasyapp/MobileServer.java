@@ -30,9 +30,6 @@ public class MobileServer {
         GRPCOwnerService ownerService = injector.getInstance(GRPCOwnerService.class);
 
         Server server = ServerBuilder.forPort(Integer.parseInt(System.getenv("PORT")))
-//                .useTransportSecurity(
-//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.cer"),
-//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.key"))
                 .addService(athleteService)
                 .addService(meetService)
                 .addService(registrationService)

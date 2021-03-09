@@ -35,9 +35,6 @@ public class DraftMasterServer extends Thread {
         router = new GrpcDraftServiceRouter();
 
         Server server = ServerBuilder.forPort(Integer.parseInt(System.getenv("PORT")))
-//                .useTransportSecurity(
-//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.cer"),
-//                        getClass().getClassLoader().getResourceAsStream("fantasytrack.key"))
                 .addService(router)
                 .intercept(authenticator)
                 .build();
