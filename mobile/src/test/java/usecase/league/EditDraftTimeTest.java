@@ -24,7 +24,7 @@ public class EditDraftTimeTest {
 
         when(meetRepository.getEnabledMeetsInLeague("test")).then(invocation -> List.of(MeetBank.testMeet2, MeetBank.testMeet4));
 
-        Instant time = Instant.now().plus(10, ChronoUnit.MINUTES);
+        Instant time = MeetBank.testMeet2.date; // shouldn't disable testMeet2 because the draft time uses PST
 
         editDraftTime.editDraftTime("test", time);
 

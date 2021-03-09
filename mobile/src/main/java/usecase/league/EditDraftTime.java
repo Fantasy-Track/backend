@@ -5,6 +5,7 @@ import domain.entity.Meet;
 import domain.exception.ApplicationException;
 import domain.repository.EditLeagueRepository;
 import domain.repository.MeetRepository;
+import util.TimeUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -34,7 +35,9 @@ public class EditDraftTime {
     private void disableMeetsBeforeDraft(String leagueId, Instant draftTime) {
         List<Meet> meets = meetRepository.getEnabledMeetsInLeague(leagueId);
         for (Meet meet : meets) {
-            if (!meet.date.isAfter(draftTime)) meetRepository.setMeetEnabled(meet.id, false);
+            if (TimeUtil.isAfterPST(draftTime, meet.date)) {
+                meetRepository.setMeetEnabled(meet.id, false);
+            }
         }
     }
 
