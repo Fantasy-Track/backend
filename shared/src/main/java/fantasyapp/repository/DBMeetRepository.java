@@ -44,8 +44,8 @@ public class DBMeetRepository implements MeetRepository {
     }
 
     @Override
-    public void flagMeetAsHasResults(String meetId) {
-        meetCollection.updateOne(eq("_id", meetId), Updates.set("hasResults", true));
+    public void setMeetHasResults(String meetId, boolean hasResults) {
+        meetCollection.updateOne(eq("_id", meetId), Updates.set("hasResults", hasResults));
     }
 
     @Override

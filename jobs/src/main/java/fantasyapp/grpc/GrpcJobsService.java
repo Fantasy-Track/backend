@@ -4,6 +4,7 @@ import com.fantasytrack.protos.JobsGrpc;
 import com.fantasytrack.protos.JobsService;
 import com.google.inject.Inject;
 import com.google.protobuf.Empty;
+import domain.exception.MeetNotScored;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import usecase.fantasyPoints.PointsUpdater;
 import usecase.leagueCreation.IndexMeets;
 import usecase.leagueCreation.IndexedAthletesDTO;
 import usecase.leagueCreation.SchoolAthletesIndexer;
+import usecase.meetProcessing.RescoreMeet;
 
 import java.util.Arrays;
 
@@ -21,12 +23,14 @@ public class GrpcJobsService extends JobsGrpc.JobsImplBase {
     private SchoolAthletesIndexer schoolAthletesIndexer;
     private IndexMeets meetsIndexer;
     private PointsUpdater pointsUpdater;
+    private RescoreMeet rescoreMeet;
 
     @Inject
-    public GrpcJobsService(SchoolAthletesIndexer schoolAthletesIndexer, IndexMeets meetsIndexer, PointsUpdater pointsUpdater) {
+    public GrpcJobsService(SchoolAthletesIndexer schoolAthletesIndexer, IndexMeets meetsIndexer, PointsUpdater pointsUpdater, RescoreMeet rescoreMeet) {
         this.schoolAthletesIndexer = schoolAthletesIndexer;
         this.meetsIndexer = meetsIndexer;
         this.pointsUpdater = pointsUpdater;
+        this.rescoreMeet = rescoreMeet;
     }
 
     @Override
@@ -57,6 +61,13 @@ public class GrpcJobsService extends JobsGrpc.JobsImplBase {
     @Override
     public void updatePoints(JobsService.UpdatePointsRequest request, StreamObserver<Empty> responseObserver) {
         pointsUpdater.recalculatePointsForLeague(request.getLeagueId());
+        responseObserver.onNext(Empty.newBuilder().build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void rescoreMeet(JobsService.RescoreMeetRequest request, StreamObserver<Empty> responseObserver) {
+        rescoreMeet.rescoreMeet(request.getMeetId());
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }

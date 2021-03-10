@@ -12,7 +12,7 @@ public interface MeetRepository {
 
     List<Meet> getAllLockedMeetsBefore(Instant time);
 
-    void flagMeetAsHasResults(String meetId);
+    void setMeetHasResults(String meetId, boolean hasResults);
 
     void addOrReplaceMeet(Meet meet);
 

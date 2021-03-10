@@ -11,6 +11,8 @@ import com.mongodb.client.model.ReplaceOptions;
 import domain.entity.ScoredResult;
 import domain.repository.ResultRepository;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +21,7 @@ import static com.mongodb.client.model.Filters.*;
 
 public class DBResultRepository implements ResultRepository {
 
+    private Logger logger = LoggerFactory.getLogger(DBResultRepository.class);
     private MongoCollection<ResultDAO> resultCollection;
 
     @Inject
@@ -45,6 +48,12 @@ public class DBResultRepository implements ResultRepository {
         )).first();
         if (document == null) return 0;
         return document.getDouble("fantasyPoints");
+    }
+
+    @Override
+    public void removeMeetResults(String meetId) {
+        var response = resultCollection.deleteMany(eq("meetId", meetId));
+        logger.info("Deleted {} results for Meet ID: {}", response.getDeletedCount(), meetId);
     }
 
 }

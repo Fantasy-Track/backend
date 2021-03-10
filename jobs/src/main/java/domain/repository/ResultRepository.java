@@ -12,4 +12,6 @@ public interface ResultRepository {
 
     double aggregatePointsAtMeets(String teamId, List<String> meetIds);
 
+    void removeMeetResults(String meetId);
+
 }

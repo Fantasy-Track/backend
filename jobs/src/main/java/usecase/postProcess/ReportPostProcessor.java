@@ -34,7 +34,7 @@ public class ReportPostProcessor {
         List<ScoredResult> leagueResults = resultsFilter.filterLeagueAthletes(allResults, meet.leagueId);
         resultsUploader.uploadAllResults(leagueResults, meet);
         pointsUpdater.recalculatePointsForLeague(meet.leagueId);
-        meetRepository.flagMeetAsHasResults(meet.id);
+        meetRepository.setMeetHasResults(meet.id, true);
         logger.info("Finished processing meet, sending notification to users");
         NotificationFactory.handler.sendMeetProcessed(meet);
     }
