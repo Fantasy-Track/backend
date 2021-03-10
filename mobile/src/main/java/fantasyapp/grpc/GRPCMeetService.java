@@ -10,7 +10,7 @@ import usecase.dto.MeetDTO;
 import usecase.meets.EditMeets;
 import usecase.meets.EditMeetsRequest;
 import usecase.meets.GetMeets;
-import usecase.meets.PullMeets;
+import usecase.meets.BackgroundMeetJobs;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ public class GRPCMeetService extends MeetGrpc.MeetImplBase {
 
     private EditMeets meetEditor;
     private GetMeets meetFetcher;
-    private PullMeets pullMeets;
+    private BackgroundMeetJobs backgroundMeetJobs;
 
     @Inject
-    public GRPCMeetService(EditMeets meetEditor, GetMeets meetFetcher, PullMeets pullMeets) {
+    public GRPCMeetService(EditMeets meetEditor, GetMeets meetFetcher, BackgroundMeetJobs backgroundMeetJobs) {
         this.meetEditor = meetEditor;
         this.meetFetcher = meetFetcher;
-        this.pullMeets = pullMeets;
+        this.backgroundMeetJobs = backgroundMeetJobs;
     }
 
     @Override
@@ -56,9 +56,23 @@ public class GRPCMeetService extends MeetGrpc.MeetImplBase {
     public void pullMeetSchedule(Empty request, StreamObserver<MeetService.GetMeetsResponse> responseObserver) {
         String leagueId = Authenticator.leagueKey.get();
         try {
-            pullMeets.pullMeets(Authenticator.teamKey.get(), leagueId);
+            backgroundMeetJobs.pullMeets(Authenticator.teamKey.get(), leagueId);
             List<MeetDTO> dtos = meetFetcher.getMeetsInLeague(leagueId);
             responseObserver.onNext(MeetSerializer.serializeMeets(dtos));
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(GrpcError.makeError(e));
+        }
+    }
+
+    @Override
+    public void rescoreMeet(MeetService.RescoreMeetRequest request, StreamObserver<Empty> responseObserver) {
+        String leagueId = Authenticator.leagueKey.get();
+        String teamId = Authenticator.teamKey.get();
+
+        try {
+            backgroundMeetJobs.rescoreMeet(request.getMeetId(), teamId, leagueId);
+            responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(GrpcError.makeError(e));

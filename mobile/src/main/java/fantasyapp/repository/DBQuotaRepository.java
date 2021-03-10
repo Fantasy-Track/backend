@@ -44,7 +44,20 @@ public class DBQuotaRepository  implements QuotaRepository {
     }
 
     @Override
+    public void triggerMeetRescoreQuota(String meetId, int minutes) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("_id", "MRS_" + meetId);
+        map.put("expireAt", Instant.now().plus(minutes, ChronoUnit.MINUTES));
+        quotas.insertOne(new Document(map));
+    }
+
+    @Override
     public boolean canPullAthletes(String leagueId) {
         return quotas.find(eq("_id", "AP_" + leagueId)).first() == null;
+    }
+
+    @Override
+    public boolean canRescoreMeet(String meetId) {
+        return quotas.find(eq("_id", "MRS_" + meetId)).first() == null;
     }
 }

@@ -53,6 +53,17 @@ public class GrpcJobsClient implements RemoteIndexer, LeaguePointsUpdater {
     }
 
     @Override
+    public void rescoreMeet(String meetId) throws Exception {
+        try {
+            jobsClient.rescoreMeet(JobsService.RescoreMeetRequest.newBuilder()
+                .setMeetId(meetId)
+                .build());
+        } catch (Exception e) {
+            throw new ServerFetchIssue();
+        }
+    }
+
+    @Override
     public void updatePoints(String leagueId) throws Exception {
         try {
             jobsClient.updatePoints(JobsService.UpdatePointsRequest.newBuilder()
