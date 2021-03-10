@@ -74,7 +74,7 @@ public class GRPCRegistrationService extends RegistrationGrpc.RegistrationImplBa
     public void loginOwner(LoginRequest request, StreamObserver<Empty> responseObserver) {
         logger.info("User logging in");
         try {
-            login.login(Authenticator.ownerKey.get());
+            login.login(Authenticator.ownerKey.get(), request.getFcmToken());
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
             logger.info("User successfully logged in");

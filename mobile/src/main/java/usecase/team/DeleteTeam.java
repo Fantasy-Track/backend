@@ -8,6 +8,7 @@ import domain.exception.*;
 import domain.repository.LeagueRepository;
 import domain.repository.TeamRepository;
 import lombok.Builder;
+import usecase.notification.NotificationFactory;
 import util.DistributedLock;
 
 public class DeleteTeam {
@@ -38,6 +39,8 @@ public class DeleteTeam {
                 throw new UnauthorizedException();
             }
             teamRepository.deleteTeam(request.teamToDeleteId);
+            NotificationFactory.handler.unregisterDeviceFromToken(request.fcmToken, request.teamToDeleteId);
+            NotificationFactory.handler.unregisterDeviceFromToken(request.fcmToken, request.leagueId);
         });
     }
 
@@ -46,6 +49,7 @@ public class DeleteTeam {
         public final String teamToDeleteId;
         public final String actingTeamId;
         public final String leagueId;
+        public final String fcmToken;
     }
 
 }

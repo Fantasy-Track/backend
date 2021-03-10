@@ -7,6 +7,8 @@ import domain.repository.NameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class NotificationHandler {
 
     private Logger logger = LoggerFactory.getLogger(NotificationHandler.class);
@@ -18,6 +20,17 @@ public class NotificationHandler {
     public NotificationHandler(NameRepository nameRepository) {
         this.nameRepository = nameRepository;
         messaging = FirebaseMessaging.getInstance();
+    }
+
+    public void registerDeviceForNotifications(String token, List<String> topics) {
+        if (token.isEmpty()) return;
+        List<String> tokens = List.of(token);
+        topics.forEach(topic -> messaging.subscribeToTopicAsync(tokens, topic));
+    }
+
+    public void unregisterDeviceFromToken(String token, String topic) {
+        if (token.isEmpty()) return;
+        messaging.unsubscribeFromTopicAsync(List.of(token), topic);
     }
 
     public void sendDraftingSoon(String leagueId) {

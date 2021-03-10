@@ -76,6 +76,7 @@ public class GRPCTeamsService extends TeamsGrpc.TeamsImplBase {
                     .actingTeamId(Authenticator.teamKey.get())
                     .teamToDeleteId(request.getId())
                     .leagueId(Authenticator.leagueKey.get())
+                    .fcmToken(request.getFcmToken())
                     .build());
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();

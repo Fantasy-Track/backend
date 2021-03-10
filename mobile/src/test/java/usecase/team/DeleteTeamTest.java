@@ -12,6 +12,8 @@ import mock.TeamBank;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import usecase.notification.NotificationFactory;
+import usecase.notification.NotificationHandler;
 
 import static org.mockito.Mockito.*;
 
@@ -25,6 +27,8 @@ public class DeleteTeamTest {
     public void setUp() {
         leagueRepository = mock(LeagueRepository.class);
         teamRepository = mock(TeamRepository.class);
+        NotificationFactory.handler = mock(NotificationHandler.class);
+
         when(teamRepository.getTeamById("T1")).then(invocation -> TeamBank.TEAM1);
         when(teamRepository.getTeamById("T2")).then(invocation -> TeamBank.TEAM2);
         when(teamRepository.getTeamById("T3")).then(invocation -> TeamBank.OTHER_LEAGUE_TEAM);
@@ -98,8 +102,11 @@ public class DeleteTeamTest {
                 .teamToDeleteId("T2")
                 .actingTeamId("T2")
                 .leagueId("test")
+                .fcmToken("deviceToken")
                 .build());
 
         verify(teamRepository).deleteTeam("T2");
+        verify(NotificationFactory.handler).unregisterDeviceFromToken("deviceToken", "T2");
+        verify(NotificationFactory.handler).unregisterDeviceFromToken("deviceToken", "test");
     }
 }
