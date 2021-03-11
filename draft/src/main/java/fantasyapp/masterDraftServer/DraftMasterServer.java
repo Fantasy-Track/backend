@@ -1,5 +1,7 @@
 package fantasyapp.masterDraftServer;
 
+import fantasyapp.EnvVars;
+import fantasyapp.SharedEnvVars;
 import fantasyapp.draftInstance.GrpcDraftService;
 import fantasyapp.draftInstance.SingleInstanceDraftServer;
 import fantasyapp.grpc.Authenticator;
@@ -34,7 +36,7 @@ public class DraftMasterServer extends Thread {
     public void run() {
         router = new GrpcDraftServiceRouter();
 
-        Server server = ServerBuilder.forPort(Integer.parseInt(System.getenv("PORT")))
+        Server server = ServerBuilder.forPort(EnvVars.PORT)
                 .addService(router)
                 .intercept(authenticator)
                 .build();
@@ -49,7 +51,7 @@ public class DraftMasterServer extends Thread {
             GrpcDraftService draftService = draftInstance.createGrpcService();
 
             router.addGrpcService(leagueId, draftService);
-            registrar.registerDraft(leagueId, System.getenv("IP") + ":" + System.getenv("PORT")); // should not be registered until all the draft info is loaded and setup
+            registrar.registerDraft(leagueId, ""); // should not be registered until all the draft info is loaded and setup
             NotificationFactory.handler.sendDraftingSoon(leagueId);
 
             try {

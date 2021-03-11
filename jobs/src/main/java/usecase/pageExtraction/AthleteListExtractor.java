@@ -2,6 +2,7 @@ package usecase.pageExtraction;
 
 import com.google.gson.Gson;
 import domain.exception.CannotParseAthletes;
+import fantasyapp.EnvVars;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import usecase.indexing.WebUtil;
@@ -16,11 +17,9 @@ import java.util.stream.Collectors;
 
 public class AthleteListExtractor {
 
-    static final String SEASON = System.getenv("SEASON_YEAR");
-
     public List<AthleteData> extractAthletes(String schoolId) throws IOException, CannotParseAthletes, ExecutionException, InterruptedException {
         Document teamPage = WebUtil
-                .queueWebPage("https://www.athletic.net/TrackAndField/School.aspx?SchoolID=" + schoolId + "&S=" + SEASON)
+                .queueWebPage("https://www.athletic.net/TrackAndField/School.aspx?SchoolID=" + schoolId + "&S=" + EnvVars.SEASON_YEAR)
                 .userAgent("Mozilla/5.0")
                 .maxBodySize(0)
                 .get();

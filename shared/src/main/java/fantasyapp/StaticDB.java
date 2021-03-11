@@ -13,8 +13,6 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,37 +29,34 @@ public class StaticDB {
     }
 
     public static RedissonClient initRedisDatabase() {
-        String redisUri = System.getenv("REDIS_URI");
-        String redisPassword = System.getenv("REDIS_PASSWORD");
-
         Config config = new Config();
-        config.useSingleServer().setConnectionMinimumIdleSize(3).setConnectionPoolSize(4).setAddress(redisUri).setPassword(redisPassword.isEmpty() ? null : redisPassword);
+        config.useSingleServer()
+            .setConnectionMinimumIdleSize(3)
+            .setConnectionPoolSize(4)
+            .setAddress(SharedEnvVars.REDIS_URI)
+            .setPassword(SharedEnvVars.REDIS_PASSWORD.isEmpty() ? null : SharedEnvVars.REDIS_PASSWORD);
         return Redisson.create(config);
     }
 
     public static MongoDatabase initMongoDatabase() {
-        String mongoUri = System.getenv("MONGO_URI");
-        String mongoDb = System.getenv("MONGO_DB");
-
         Logger mongoLogger = Logger.getLogger("org.mongodb");
         mongoLogger.setLevel(Level.WARNING);
 
         CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+            fromProviders(PojoCodecProvider.builder().automatic(true).build()));
         MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(mongoUri))
-                .codecRegistry(pojoCodecRegistry)
-                .build();
+            .applyConnectionString(new ConnectionString(SharedEnvVars.MONGO_URI))
+            .codecRegistry(pojoCodecRegistry)
+            .build();
 
-        return MongoClients.create(settings).getDatabase(mongoDb);
+        return MongoClients.create(settings).getDatabase(SharedEnvVars.MONGO_DB);
     }
 
     public static void setupFirebase() {
         try {
             FirebaseOptions options = new FirebaseOptions.Builder()
-                .setProjectId("fantasytrackhs")
+                .setProjectId(SharedEnvVars.GOOGLE_PROJECT_ID)
                 .setCredentials(GoogleCredentials.getApplicationDefault())
-                .setDatabaseUrl("https://fantasytrackhs.firebaseio.com")
                 .build();
             FirebaseApp.initializeApp(options);
         } catch (Exception e) {

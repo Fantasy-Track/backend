@@ -18,7 +18,7 @@ public class MobileServer {
     public void run() throws IOException, InterruptedException {
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
-        Injector injector = Guice.createInjector(new MobileModule(System.getenv("JOBS_IP"), Integer.parseInt(System.getenv("JOBS_PORT"))));
+        Injector injector = Guice.createInjector(new MobileModule(EnvVars.JOBS_IP, EnvVars.JOBS_PORT));
 
         GRPCAthletesService athleteService = injector.getInstance(GRPCAthletesService.class);
         GRPCRegistrationService registrationService = injector.getInstance(GRPCRegistrationService.class);
@@ -29,7 +29,7 @@ public class MobileServer {
         GRPCTransactionService transactionService = injector.getInstance(GRPCTransactionService.class);
         GRPCOwnerService ownerService = injector.getInstance(GRPCOwnerService.class);
 
-        Server server = ServerBuilder.forPort(Integer.parseInt(System.getenv("PORT")))
+        Server server = ServerBuilder.forPort(EnvVars.PORT)
                 .addService(athleteService)
                 .addService(meetService)
                 .addService(registrationService)

@@ -1,5 +1,6 @@
 package usecase.leagueCreation;
 
+import fantasyapp.EnvVars;
 import fantasyapp.repository.Events;
 import com.google.inject.Inject;
 import domain.entity.Athlete;
@@ -20,9 +21,8 @@ public class ProjectionsUpdater {
     private GenerateLeagueRankings leagueRankings;
     private AthleteUpdateRepository athleteUpdateRepository;
 
-    static final String SEASON_YEAR = System.getenv("SEASON_YEAR");
-    static final String PROJECTIONS_YEAR_1 = String.valueOf(Integer.parseInt(SEASON_YEAR) - 1);
-    static final String PROJECTIONS_YEAR_2 = String.valueOf(Integer.parseInt(SEASON_YEAR) - 2);
+    static final String PROJECTIONS_YEAR_1 = String.valueOf(EnvVars.SEASON_YEAR - 1);
+    static final String PROJECTIONS_YEAR_2 = String.valueOf(EnvVars.SEASON_YEAR - 2);
 
     @Inject
     public ProjectionsUpdater(GenerateLeagueRankings leagueRankings, AthleteUpdateRepository athleteUpdateRepository) {

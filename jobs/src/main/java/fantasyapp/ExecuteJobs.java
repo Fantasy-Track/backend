@@ -76,8 +76,7 @@ public class ExecuteJobs {
                 }
         ));
 
-        InetSocketAddress address = new InetSocketAddress("0.0.0.0", Integer.parseInt(System.getenv("PORT")));
-        Server server = NettyServerBuilder.forAddress(address)
+        Server server = NettyServerBuilder.forPort(EnvVars.PORT)
                 .addService(injector.getInstance(GrpcJobsService.class))
                 .build();
 

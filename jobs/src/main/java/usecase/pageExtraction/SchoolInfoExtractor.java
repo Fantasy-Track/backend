@@ -3,6 +3,7 @@ package usecase.pageExtraction;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import domain.exception.CannotParse;
+import fantasyapp.EnvVars;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import usecase.indexing.WebUtil;
@@ -14,11 +15,9 @@ import java.util.regex.Pattern;
 
 public class SchoolInfoExtractor {
 
-    static final String SEASON = System.getenv("SEASON_YEAR");
-
     private Document getSchoolPage(String schoolId) throws Exception {
         return WebUtil
-                .queueWebPage("https://www.athletic.net/TrackAndField/School.aspx?SchoolID=" + schoolId + "&S=" + SEASON)
+                .queueWebPage("https://www.athletic.net/TrackAndField/School.aspx?SchoolID=" + schoolId + "&S=" + EnvVars.SEASON_YEAR)
                 .userAgent("Mozilla/5.0")
                 .maxBodySize(0)
                 .get();
