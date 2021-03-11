@@ -1,11 +1,11 @@
 package fantasyapp;
 
-import fantasyapp.batchAssignments.ProcessMeetsBatch;
-import fantasyapp.batchAssignments.ProcessTradesBatch;
-import fantasyapp.grpc.GrpcJobsService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import fantasyapp.batchAssignments.ProcessMeetsBatch;
+import fantasyapp.batchAssignments.ProcessTradesBatch;
+import fantasyapp.grpc.GrpcJobsService;
 import io.grpc.Server;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import org.slf4j.Logger;
@@ -17,8 +17,7 @@ import usecase.meetLocking.LockMeets;
 import usecase.meetLocking.UpcomingMeetNotifier;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.time.*;
+import java.time.Duration;
 import java.util.TimeZone;
 
 public class ExecuteJobs {
@@ -64,7 +63,7 @@ public class ExecuteJobs {
             }
         }, Duration.ofMinutes(30));
 
-        scheduler.schedule(lockMeets::lockMeetsToday, new CronTrigger("0 1 0 * * ?", TimeZone.getTimeZone("America/Los_Angeles")));
+        scheduler.schedule(lockMeets::lockMeetsToday, new CronTrigger("0 5 0 * * ?", TimeZone.getTimeZone("America/Los_Angeles")));
         scheduler.schedule(upcomingMeetNotifier::sendNotificationForUpcomingMeets, new CronTrigger("0 0 17 * * ?", TimeZone.getTimeZone("America/Los_Angeles")));
 
         Runtime.getRuntime().addShutdownHook(new Thread(
