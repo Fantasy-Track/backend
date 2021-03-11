@@ -35,11 +35,12 @@ public class DBMeetRepository implements MeetRepository {
     }
 
     @Override
-    public List<Meet> getAllLockedMeetsBefore(Instant time) {
+    public List<Meet> getAllLockedMeetsBetween(Instant start, Instant end) {
         FindIterable<MeetDAO> daos = meetCollection.find(
                 and(eq("hasResults", false),
                         eq("locked", true),
-                        lte("date", time)));
+                        gte("date", start),
+                        lt("date", end)));
         return daos.map(MeetMapper::daoToMeet).into(new ArrayList<>());
     }
 

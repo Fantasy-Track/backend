@@ -10,7 +10,7 @@ public interface MeetRepository {
 
     List<Meet> getMeetsInLeague(String leagueId);
 
-    List<Meet> getAllLockedMeetsBefore(Instant time);
+    List<Meet> getAllLockedMeetsBetween(Instant start, Instant end);
 
     void setMeetHasResults(String meetId, boolean hasResults);
 
