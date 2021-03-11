@@ -15,6 +15,7 @@ public class Meet {
     public final boolean hasResults;
     public final boolean enabled;
     public final boolean locked;
+    public final boolean rescore;
     public final List<Contract> savedContracts;
 
     @Override

@@ -10,7 +10,7 @@ public interface MeetRepository {
 
     List<Meet> getMeetsInLeague(String leagueId);
 
-    List<Meet> getAllLockedMeetsBetween(Instant start, Instant end);
+    List<Meet> getMeetsToScoreBetween(Instant start, Instant end);
 
     void setMeetHasResults(String meetId, boolean hasResults);
 
@@ -27,4 +27,6 @@ public interface MeetRepository {
     Meet getMeetById(String meetId);
 
     void flagMeetAsLocked(String meetId);
+
+    void setRescoreMeet(String meetId, boolean rescore);
 }

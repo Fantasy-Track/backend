@@ -20,7 +20,8 @@ public class BackgroundMeetJobs {
 
     private Logger logger = LoggerFactory.getLogger(BackgroundMeetJobs.class);
 
-    final int QUOTA_MINS = 60;
+    final int PULL_QUOTA_MINS = 60;
+    final int RESCORE_QUOTA_MINS = 180;
 
     public MeetRepository meetRepository;
     public LeagueRepository leagueRepository;
@@ -41,10 +42,10 @@ public class BackgroundMeetJobs {
         League league = leagueRepository.getLeagueById(leagueId);
         if (league == null) throw new LeagueNotExists();
         else if (!league.owningTeam.equals(teamId)) throw new UnauthorizedException();
-        else if (!quotaRepository.canPullMeets(leagueId)) throw new QuotaReachedMinutes(QUOTA_MINS);
+        else if (!quotaRepository.canPullMeets(leagueId)) throw new QuotaReachedMinutes(PULL_QUOTA_MINS);
 
         remoteIndexer.indexMeets(league.schoolId, leagueId, league.draftSettings.startTime);
-        quotaRepository.triggerMeetsPulledQuota(leagueId, QUOTA_MINS);
+        quotaRepository.triggerMeetsPulledQuota(leagueId, PULL_QUOTA_MINS);
 
         logger.info("Meets pulled successfully for: " + leagueId);
     }
@@ -58,10 +59,10 @@ public class BackgroundMeetJobs {
         else if (meet == null) throw new MeetNotExists();
         else if (!meet.hasResults) throw new MeetNotScored();
         else if (!league.owningTeam.equals(teamId)) throw new UnauthorizedException();
-        else if (!quotaRepository.canRescoreMeet(leagueId)) throw new QuotaReachedMinutes(QUOTA_MINS);
+        else if (!quotaRepository.canRescoreMeet(meetId)) throw new QuotaReachedMinutes(RESCORE_QUOTA_MINS);
 
         remoteIndexer.rescoreMeet(meetId);
-        quotaRepository.triggerMeetRescoreQuota(meetId, QUOTA_MINS);
+        quotaRepository.triggerMeetRescoreQuota(meetId, RESCORE_QUOTA_MINS);
 
         logger.info("Meet {} marked for rescoring", meetId);
     }

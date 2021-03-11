@@ -66,13 +66,14 @@ public class GRPCMeetService extends MeetGrpc.MeetImplBase {
     }
 
     @Override
-    public void rescoreMeet(MeetService.RescoreMeetRequest request, StreamObserver<Empty> responseObserver) {
+    public void rescoreMeet(MeetService.RescoreMeetRequest request, StreamObserver<MeetService.GetMeetsResponse> responseObserver) {
         String leagueId = Authenticator.leagueKey.get();
         String teamId = Authenticator.teamKey.get();
 
         try {
             backgroundMeetJobs.rescoreMeet(request.getMeetId(), teamId, leagueId);
-            responseObserver.onNext(Empty.newBuilder().build());
+            List<MeetDTO> dtos = meetFetcher.getMeetsInLeague(leagueId);
+            responseObserver.onNext(MeetSerializer.serializeMeets(dtos));
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(GrpcError.makeError(e));

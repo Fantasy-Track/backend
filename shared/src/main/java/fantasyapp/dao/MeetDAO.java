@@ -9,7 +9,7 @@ public class MeetDAO {
     private String id;
     private String athleticId, name, leagueId;
     private Instant date;
-    private boolean hasResults, enabled, locked;
+    private boolean hasResults, enabled, locked, rescore;
     private List<ContractDAO> savedContracts;
 
     public boolean isLocked() {
@@ -82,5 +82,13 @@ public class MeetDAO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isRescore() {
+        return rescore;
+    }
+
+    public void setRescore(boolean rescore) {
+        this.rescore = rescore;
     }
 }

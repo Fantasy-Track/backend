@@ -31,7 +31,7 @@ public class ProcessMeetsBatch {
     }
 
     public void processMeets() {
-        List<Meet> meets = meetRepository.getAllLockedMeetsBetween(Instant.now().minus(14, ChronoUnit.DAYS), Instant.now());
+        List<Meet> meets = meetRepository.getMeetsToScoreBetween(Instant.now().minus(14, ChronoUnit.DAYS), Instant.now());
         for (Meet meet : meets) {
             logger.info("Processing meet: " + meet.id);
             MeetProcessingThread job = new MeetProcessingThread(meet, meetReporter, postProcessor);

@@ -17,6 +17,7 @@ public class MeetMapper {
                 .date(dao.getDate())
                 .locked(dao.isLocked())
                 .enabled(dao.isEnabled())
+                .rescore(dao.isRescore())
                 .savedContracts(dao.getSavedContracts().stream()
                         .map(ContractMapper::daoToContract).collect(Collectors.toList()))
                 .build();
@@ -34,6 +35,7 @@ public class MeetMapper {
         dao.setHasResults(meet.hasResults);
         dao.setEnabled(meet.enabled);
         dao.setLocked(meet.locked);
+        dao.setRescore(meet.rescore);
         return dao;
     }
 }

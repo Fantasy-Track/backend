@@ -35,12 +35,13 @@ public class DBMeetRepository implements MeetRepository {
     }
 
     @Override
-    public List<Meet> getAllLockedMeetsBetween(Instant start, Instant end) {
+    public List<Meet> getMeetsToScoreBetween(Instant start, Instant end) {
         FindIterable<MeetDAO> daos = meetCollection.find(
-                and(eq("hasResults", false),
-                        eq("locked", true),
-                        gte("date", start),
-                        lt("date", end)));
+            and(eq("hasResults", false),
+                eq("locked", true),
+                and(or(gte("date", start), eq("rescore", true)),  // start date doesn't matter if rescore is true
+                    lt("date", end))
+            ));
         return daos.map(MeetMapper::daoToMeet).into(new ArrayList<>());
     }
 
@@ -90,5 +91,10 @@ public class DBMeetRepository implements MeetRepository {
     @Override
     public void flagMeetAsLocked(String meetId) {
         meetCollection.updateOne(eq("_id", meetId), Updates.set("locked", true));
+    }
+
+    @Override
+    public void setRescoreMeet(String meetId, boolean rescore) {
+        meetCollection.updateOne(eq("_id", meetId), Updates.set("rescore", true));
     }
 }

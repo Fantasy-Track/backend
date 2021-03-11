@@ -29,8 +29,9 @@ public class RescoreMeet {
         Meet meet = meetRepository.getMeetById(meetId);
         logger.info(String.format("Removing meet results: (Meet ID: %s, League ID: %s)", meetId, meet.leagueId));
         resultRepository.removeMeetResults(meetId);
-        pointsUpdater.recalculatePointsForLeague(meet.leagueId);
+        meetRepository.setRescoreMeet(meetId, true);
         meetRepository.setMeetHasResults(meetId, false);
+        pointsUpdater.recalculatePointsForLeague(meet.leagueId);
     }
 
 }
